@@ -1,3 +1,5 @@
+# Scale up reacts immediately; scale down waits 5 minutes so a brief
+# dip in CPU does not churn capacity in the middle of a rollout.
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:

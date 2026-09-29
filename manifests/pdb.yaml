@@ -1,3 +1,5 @@
+# minAvailable: 2 keeps two pods serving while a third is disrupted,
+# which pairs with the deployment's 3 replicas and rolling update.
 apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:

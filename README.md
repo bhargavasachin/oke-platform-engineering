@@ -12,7 +12,8 @@ A public reference implementation of Kubernetes platform patterns for OCI OKE: w
 - Rolling updates and rollback-friendly deployment settings
 - PodDisruptionBudget for voluntary disruption
 - Horizontal Pod Autoscaling
-- Helm-based packaging
+- Pod and container security defaults (seccomp, non-root, read-only filesystem)
+- NetworkPolicy for ingress control
 - Operational troubleshooting patterns
 
 ## Layout
@@ -24,14 +25,13 @@ A public reference implementation of Kubernetes platform patterns for OCI OKE: w
 │   ├── deployment.yaml
 │   ├── service.yaml
 │   ├── pdb.yaml
-│   └── hpa.yaml
-├── helm/
-│   └── platform-app/
-│       ├── Chart.yaml
-│       ├── values.yaml
-│       └── templates/
+│   ├── hpa.yaml
+│   └── network-policy.yaml
 ├── docs/
-│   └── troubleshooting.md
+│   ├── troubleshooting.md
+│   ├── operations.md
+│   └── upgrade-and-rollout.md
+├── LICENSE
 └── README.md
 ```
 
@@ -53,6 +53,7 @@ kubectl apply -f manifests/deployment.yaml
 kubectl apply -f manifests/service.yaml
 kubectl apply -f manifests/pdb.yaml
 kubectl apply -f manifests/hpa.yaml
+kubectl apply -f manifests/network-policy.yaml
 ```
 
 Inspect rollout and health:
