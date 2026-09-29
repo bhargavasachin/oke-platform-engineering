@@ -1,0 +1,10 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: platform-app
+  namespace: platform-demo
+spec:
+  minAvailable: 2
+  selector:
+    matchLabels:
+      app: platform-app
