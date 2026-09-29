@@ -18,7 +18,11 @@ spec:
       labels:
         app: platform-app
     spec:
+      automountServiceAccountToken: false
       terminationGracePeriodSeconds: 30
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: app
           image: YOUR_REGISTRY/your-image:tag
@@ -26,6 +30,13 @@ spec:
           ports:
             - name: http
               containerPort: 8080
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            runAsNonRoot: true
+            readOnlyRootFilesystem: true
           resources:
             requests:
               cpu: 250m
