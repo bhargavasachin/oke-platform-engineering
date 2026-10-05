@@ -30,7 +30,9 @@ A public reference implementation of Kubernetes platform patterns for OCI OKE: w
 ├── docs/
 │   ├── troubleshooting.md
 │   ├── operations.md
-│   └── upgrade-and-rollout.md
+│   ├── upgrade-and-rollout.md
+│   └── runbooks/
+│       └── crashloopbackoff.md
 ├── LICENSE
 └── README.md
 ```
