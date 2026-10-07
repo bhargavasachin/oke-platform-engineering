@@ -1,0 +1,18 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: platform-app
+  namespace: platform-demo
+  labels:
+    app: platform-app
+spec:
+  selector:
+    matchLabels:
+      app: platform-app
+  endpoints:
+    # Platform scrape contract: the workload exposes Prometheus-format metrics
+    # at /metrics on its http port. Point path/port at the application's real
+    # metrics endpoint; everything else in this file stays the same.
+    - port: http
+      path: /metrics
+      interval: 30s

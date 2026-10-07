@@ -27,6 +27,9 @@ A public reference implementation of Kubernetes platform patterns for OCI OKE: w
 │   ├── pdb.yaml
 │   ├── hpa.yaml
 │   └── network-policy.yaml
+├── monitoring/
+│   ├── servicemonitor.yaml
+│   └── prometheus-rules.yaml
 ├── docs/
 │   ├── troubleshooting.md
 │   ├── operations.md
@@ -44,6 +47,28 @@ A readiness failure removes a pod from Service endpoints without necessarily res
 Resource requests are used for scheduling and capacity planning; limits are treated as an explicit workload constraint rather than a substitute for sizing. HPA is meaningful only when the workload has requests and the cluster exposes the required metrics.
 
 The examples use placeholders such as `YOUR_REGISTRY/your-image:tag`. No registry credentials are included.
+
+## Observability
+
+The `monitoring/` directory holds the platform's scrape contract and baseline
+alerts, both written for the Prometheus operator (`ServiceMonitor` and
+`PrometheusRule` CRDs, as shipped with kube-prometheus-stack):
+
+- `servicemonitor.yaml` scrapes the workload's Prometheus metrics endpoint.
+  The platform contract is `/metrics` on the `http` port; point it at the
+  application's real endpoint.
+- `prometheus-rules.yaml` alerts on the failure modes in the runbooks, using
+  kube-state-metrics so no application changes are needed:
+  `PlatformAppCrashLoopBackOff` (warning, links the CrashLoopBackOff runbook),
+  `PlatformAppHighRestarts` (warning), and `PlatformAppUnavailable` (critical
+  when fewer than the expected 3 replicas are available).
+
+Apply after the manifests:
+
+```bash
+kubectl apply -f monitoring/servicemonitor.yaml
+kubectl apply -f monitoring/prometheus-rules.yaml
+```
 
 ## Apply the example
 

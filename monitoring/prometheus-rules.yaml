@@ -1,0 +1,49 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: platform-app
+  namespace: platform-demo
+  labels:
+    app: platform-app
+spec:
+  groups:
+    - name: platform-app
+      interval: 30s
+      rules:
+        - alert: PlatformAppCrashLoopBackOff
+          expr: |
+            kube_pod_container_status_waiting_reason{namespace="platform-demo", reason="CrashLoopBackOff"} == 1
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Pod {{ $labels.pod }} is crash-looping"
+            description: >-
+              Container {{ $labels.container }} in pod {{ $labels.pod }} has been
+              in CrashLoopBackOff for more than 5 minutes.
+              Triage with docs/runbooks/crashloopbackoff.md.
+
+        - alert: PlatformAppHighRestarts
+          expr: |
+            increase(kube_pod_container_status_restarts_total{namespace="platform-demo"}[1h]) > 5
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "High container restart rate in platform-demo"
+            description: >-
+              More than 5 container restarts in the last hour in namespace
+              platform-demo. Check whether a recent rollout introduced the
+              instability before it becomes a crash loop.
+
+        - alert: PlatformAppUnavailable
+          expr: |
+            sum(kube_deployment_status_replicas_available{namespace="platform-demo", deployment="platform-app"}) < 3
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "platform-app has fewer than 3 available replicas"
+            description: >-
+              The deployment is expected to run 3 replicas. Fewer than 3 have
+              been available for more than 5 minutes.
